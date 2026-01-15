@@ -1,0 +1,86 @@
+PUT /music_index_v2
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "trigram_filter": {
+          "type": "ngram",
+          "min_gram": 3,
+          "max_gram": 3
+        },
+        "music_stop_filter": {
+          "type": "stop",
+          "stopwords": [
+            "feat",
+            "featuring",
+            "with",
+            "and",
+            "&"
+          ]
+        }
+      },
+      "analyzer": {
+        "trigram_indexing_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "music_stop_filter",
+            "trigram_filter"
+          ]
+        },
+        "music_search_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "music_stop_filter"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "album_name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "artists": {
+        "type": "text",
+        "analyzer": "trigram_indexing_analyzer",
+        "search_analyzer": "music_search_analyzer",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "track_name": {
+        "type": "text",
+        "analyzer": "trigram_indexing_analyzer",
+        "search_analyzer": "music_search_analyzer",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "track_popularity": {
+        "type": "long"
+      },
+      "track_row_id": {
+        "type": "long"
+      }
+    }
+  }
+}
