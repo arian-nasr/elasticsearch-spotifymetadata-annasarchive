@@ -1,0 +1,14 @@
+GET /music_index_v2/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "Ariana grande - one less prob",
+      "fields": [
+        "artists^2",
+        "track_name"
+      ],
+      "type": "cross_fields",
+      "operator": "and"
+    }
+  }
+}
