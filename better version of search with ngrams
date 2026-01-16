@@ -1,0 +1,30 @@
+
+
+GET /music_tracks/_search
+{
+  "query": {
+    "function_score": {
+      "query": {
+        "multi_match": {
+          "query": "kendrick tv off ",
+          "type": "cross_fields",
+          "fields": ["artists^2", "track_name"],
+          "operator": "and",
+          "analyzer": "folded_search"
+        }
+      },
+      "functions": [
+        {
+          "field_value_factor": {
+            "field": "track_popularity",
+            "modifier": "log1p",
+            "factor": 2.0,
+            "missing": 0
+          }
+        }
+      ],
+      "score_mode": "multiply",
+      "boost_mode": "multiply"
+    }
+  }
+}
