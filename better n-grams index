@@ -1,0 +1,92 @@
+PUT /music_tracks
+{
+  "settings": {
+    "index": {
+      "max_ngram_diff": 18
+    },
+    "analysis": {
+      "filter": {
+        "my_ngram": {
+          "type": "ngram",
+          "min_gram": 2,
+          "max_gram": 20
+        },
+        "my_ascii_folding": {
+          "type": "asciifolding"
+        }
+      },
+      "analyzer": {
+        "folded_ngram": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "my_ascii_folding",
+            "my_ngram"
+          ]
+        },
+        "folded_search": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "my_ascii_folding"
+          ]
+        }
+      },
+      "normalizer": {
+        "folded_normalizer": {
+          "type": "custom",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "album_name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256,
+            "normalizer": "folded_normalizer"
+          }
+        }
+      },
+      "artists": {
+        "type": "text",
+        "analyzer": "folded_ngram",
+        "search_analyzer": "folded_search",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256,
+            "normalizer": "folded_normalizer"
+          }
+        }
+      },
+      "track_name": {
+        "type": "text",
+        "analyzer": "folded_ngram",
+        "search_analyzer": "folded_search",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256,
+            "normalizer": "folded_normalizer"
+          }
+        }
+      },
+      "track_popularity": {
+        "type": "long"
+      },
+      "track_row_id": {
+        "type": "long"
+      }
+    }
+  }
+}
